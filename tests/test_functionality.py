@@ -149,7 +149,7 @@ def test_additional_country_data():
     )
     converter_extended = coco.CountryConverter(additional_data=add_data)
     assert "xxx country" == converter_extended.convert("XXX", src="ISO3", to="name_short")
-    assert converter_extended.convert("XXX", src="ISO3", to="continent") == ""
+    assert pd.isna(converter_extended.convert("XXX", src="ISO3", to="continent"))
 
 
 def test_UNmember():

@@ -434,6 +434,7 @@ class CountryConverter:
                     na_values=accepted_na_values,
                     keep_default_na=False,
                 )
+                ret = ret.fillna({col: "" for col in ret.columns if col in must_be_string})
                 ret = ret.astype({col: "Int64" for col in ret.columns if col in must_be_int})
                 test_for_unique_names(ret, data)
             return ret
@@ -454,7 +455,6 @@ class CountryConverter:
         add_data = [data_loader(df) for df in additional_data]
 
         self.data = pd.concat([basic_df, *add_data], ignore_index=True, axis=0, sort=True)
-        self.data[list(must_be_string)] = self.data[list(must_be_string)].fillna("").astype(str)
 
         test_for_unique_names(self.data, data_name="merged data - keep last one", report_fun=log.warning)
 
@@ -575,7 +575,7 @@ class CountryConverter:
                 result_list = []
 
                 for ind_regex, ccregex in enumerate(regexes):
-                    if ccregex.pattern and ccregex.search(spec_name):
+                    if ccregex.search(spec_name):
                         result_list.append(self.data.loc[ind_regex, to].to_numpy()[0])
                     if len(result_list) > 1:
                         log.warning(f"More than one regular expression match for {spec_name}")
